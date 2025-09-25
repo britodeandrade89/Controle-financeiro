@@ -232,9 +232,16 @@
         import { getAuth, onAuthStateChanged, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc, onSnapshot, updateDoc, arrayUnion, arrayRemove, runTransaction } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // --- CONFIGURAÇÃO DO FIREBASE (IMPORTANTE!) ---
-        // Cole aqui as configurações do seu projeto Firebase.
-        // Você encontra isso no Console do Firebase > Configurações do Projeto > Geral > Seus apps > App da Web.
+        // ==================================================================================
+        // ==================================================================================
+        // --- CONFIGURAÇÃO DO FIREBASE (PASSO MAIS IMPORTANTE!) ---
+        //
+        // COLE AQUI AS CONFIGURAÇÕES DO SEU PROJETO FIREBASE.
+        // Você encontra isso no Console do Firebase > Configurações do Projeto > Geral.
+        //
+        // APAGUE O BLOCO DE EXEMPLO ABAIXO E COLE O SEU NO LUGAR.
+        // ==================================================================================
+        // ==================================================================================
         const firebaseConfig = {
             apiKey: "COLE_SUA_API_KEY_AQUI",
             authDomain: "SEU_PROJETO.firebaseapp.com",
@@ -243,6 +250,9 @@
             messagingSenderId: "SEU_SENDER_ID",
             appId: "SEU_APP_ID_DA_WEB"
         };
+        // ==================================================================================
+        // ==================================================================================
+
 
         const appId = 'controle-financeiro-app'; // Você pode manter este nome ou escolher outro.
 
@@ -435,8 +445,41 @@
             updateChart(expenses, shoppingItems);
         }
         
-        function createIncomeItemHTML(item) { return `<div class="flex justify-between items-center bg-neutral-800/50 p-3 rounded-lg" data-id="${item.id}"><p class="text-neutral-300 text-sm">${item.description}</p><div class="flex items-center gap-3"><p class="font-semibold text-green-400 text-sm">${formatCurrency(item.amount)}</p><button class="delete-income-btn text-neutral-500 hover:text-red-400 transition-colors"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button></div></div>`;}
-        function createExpenseItemHTML(item) { const isPaid = item.paid; const installmentText = item.total > 1 ? `<span class="text-xs font-mono bg-neutral-700 px-2 py-1 rounded-md">${item.current}/${item.total}</span>` : ''; return `<div class="flex justify-between items-center bg-neutral-800/50 p-3 rounded-lg" data-id="${item.id}"><div class="flex items-center gap-3 flex-1 min-w-0"><button class="pay-btn p-1 rounded-full border-2 ${isPaid ? 'border-cyan-500 bg-cyan-500' : 'border-neutral-500'} transition-all flex-shrink-0"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></button><div class="${isPaid ? 'paid-item' : ''} truncate"><p class="text-neutral-200 text-sm truncate">${item.description}</p></div></div><div class="flex items-center gap-2">${installmentText}<p class="font-semibold text-neutral-300 text-sm w-20 text-right">${formatCurrency(item.amount)}</p><button class="delete-expense-btn text-neutral-500 hover:text-red-400 transition-colors"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button></div></div>`;}
+        function createIncomeItemHTML(item) {
+            return `
+                <div class="flex justify-between items-center bg-neutral-800/50 p-3 rounded-lg" data-id="${item.id}">
+                    <p class="text-neutral-300 text-sm">${item.description}</p>
+                    <div class="flex items-center gap-3">
+                        <p class="font-semibold text-green-400 text-sm">${formatCurrency(item.amount)}</p>
+                        <button class="delete-income-btn text-neutral-500 hover:text-red-400 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                        </button>
+                    </div>
+                </div>`;
+        }
+        
+        function createExpenseItemHTML(item) {
+            const isPaid = item.paid;
+            const installmentText = item.total > 1 ? `<span class="text-xs font-mono bg-neutral-700 px-2 py-1 rounded-md">${item.current}/${item.total}</span>` : '';
+            return `
+                <div class="flex justify-between items-center bg-neutral-800/50 p-3 rounded-lg" data-id="${item.id}">
+                    <div class="flex items-center gap-3 flex-1 min-w-0">
+                        <button class="pay-btn p-1 rounded-full border-2 ${isPaid ? 'border-cyan-500 bg-cyan-500' : 'border-neutral-500'} transition-all flex-shrink-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                        </button>
+                        <div class="${isPaid ? 'paid-item' : ''} truncate">
+                            <p class="text-neutral-200 text-sm truncate">${item.description}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        ${installmentText}
+                        <p class="font-semibold text-neutral-300 text-sm w-20 text-right">${formatCurrency(item.amount)}</p>
+                        <button class="delete-expense-btn text-neutral-500 hover:text-red-400 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                        </button>
+                    </div>
+                </div>`;
+        }
         
         function createShoppingItemHTML(item) {
             const isPaid = item.paid;
@@ -459,14 +502,30 @@
                 </div>`;
         }
 
-        function renderIncomeList(incomes) { UIElements.incomeList.innerHTML = incomes.length > 0 ? incomes.map(createIncomeItemHTML).join('') : `<p class="text-neutral-500 text-center py-4 text-sm">Nenhuma entrada registrada.</p>`;}
+        function renderIncomeList(incomes) {
+            UIElements.incomeList.innerHTML = incomes.length > 0
+                ? incomes.map(createIncomeItemHTML).join('')
+                : `<p class="text-neutral-500 text-center py-4 text-sm">Nenhuma entrada registrada.</p>`;
+        }
+
         function renderExpensesList(expenses) {
             const fixed = expenses.filter(e => e.category === 'fixa');
             const variable = expenses.filter(e => e.category === 'variavel');
-            UIElements.fixedExpensesList.innerHTML = fixed.length > 0 ? fixed.map(createExpenseItemHTML).join('') : `<p class="text-neutral-500 text-center py-4 text-sm">Nenhuma despesa fixa.</p>`;
-            UIElements.variableExpensesList.innerHTML = variable.length > 0 ? variable.map(createExpenseItemHTML).join('') : `<p class="text-neutral-500 text-center py-4 text-sm">Nenhuma despesa variável.</p>`;
+            
+            UIElements.fixedExpensesList.innerHTML = fixed.length > 0
+                ? fixed.map(createExpenseItemHTML).join('')
+                : `<p class="text-neutral-500 text-center py-4 text-sm">Nenhuma despesa fixa.</p>`;
+            
+            UIElements.variableExpensesList.innerHTML = variable.length > 0
+                ? variable.map(createExpenseItemHTML).join('')
+                : `<p class="text-neutral-500 text-center py-4 text-sm">Nenhuma despesa variável.</p>`;
         }
-        function renderShoppingList(items) { UIElements.shoppingList.innerHTML = items.length > 0 ? items.map(createShoppingItemHTML).join('') : `<p class="text-neutral-500 text-center py-4 text-sm">Nenhuma compra registrada.</p>`;}
+        
+        function renderShoppingList(items) {
+            UIElements.shoppingList.innerHTML = items.length > 0
+                ? items.map(createShoppingItemHTML).join('')
+                : `<p class="text-neutral-500 text-center py-4 text-sm">Nenhuma compra registrada.</p>`;
+        }
 
         function updateChart(expenses, shoppingItems) {
             const ctx = document.getElementById('expenses-chart').getContext('2d');
@@ -492,7 +551,11 @@
             }
         }
 
-        function updateMonthDisplay() { const monthName = state.currentDate.toLocaleString('pt-BR', { month: 'long' }); const year = state.currentDate.getFullYear(); UIElements.currentMonthDisplay.textContent = `${monthName.charAt(0).toUpperCase() + monthName.slice(1)} ${year}`;}
+        function updateMonthDisplay() {
+            const monthName = state.currentDate.toLocaleString('pt-BR', { month: 'long' });
+            const year = state.currentDate.getFullYear();
+            UIElements.currentMonthDisplay.textContent = `${monthName.charAt(0).toUpperCase() + monthName.slice(1)} ${year}`;
+        }
 
         // --- GEMINI API INTEGRATION ---
         async function getFinancialAnalysis(monthData) {
@@ -522,7 +585,33 @@
                 return "Não foi possível obter a análise. Tente novamente mais tarde.";
             }
         }
-        function formatResponseForHTML(text) { if (!text) return '<p>Não foi possível gerar a análise.</p>'; const lines = text.split('\n'); let html = ''; let inList = false; lines.forEach(line => { line = line.trim(); if (!line) return; line = line.replace(/\*\*(.*?)\*\*/g, '<strong class="text-cyan-400">$1</strong>'); if (line.startsWith('- ') || line.startsWith('* ')) { if (!inList) { html += '<ul>'; inList = true; } html += `<li class="ml-4 list-disc mb-2">${line.substring(2)}</li>`; } else { if (inList) { html += '</ul>'; inList = false; } html += `<p class="mb-3">${line}</p>`; } }); if (inList) html += '</ul>'; return html; }
+        
+        function formatResponseForHTML(text) {
+            if (!text) return '<p>Não foi possível gerar a análise.</p>';
+            const lines = text.split('\n');
+            let html = '';
+            let inList = false;
+            lines.forEach(line => {
+                line = line.trim();
+                if (!line) return;
+                line = line.replace(/\*\*(.*?)\*\*/g, '<strong class="text-cyan-400">$1</strong>');
+                if (line.startsWith('- ') || line.startsWith('* ')) {
+                    if (!inList) {
+                        html += '<ul>';
+                        inList = true;
+                    }
+                    html += `<li class="ml-4 list-disc mb-2">${line.substring(2)}</li>`;
+                } else {
+                    if (inList) {
+                        html += '</ul>';
+                        inList = false;
+                    }
+                    html += `<p class="mb-3">${line}</p>`;
+                }
+            });
+            if (inList) html += '</ul>';
+            return html;
+        }
         
         // --- EVENT HANDLERS & MODAL LOGIC ---
         function changeMonth(offset) { state.currentDate.setMonth(state.currentDate.getMonth() + offset); loadAndDisplayMonthData(state.currentDate); }
