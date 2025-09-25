@@ -49,7 +49,7 @@
                     </svg>
                 </div>
                 <h1 class="text-2xl font-bold text-neutral-800">Controle Financeiro</h1>
-                <p class="text-neutral-500 text-sm">Carregando seus dados...</p>
+                <p id="splash-message" class="text-neutral-500 text-sm text-center">Carregando seus dados...</p>
             </div>
         </div>
     </div>
@@ -232,10 +232,19 @@
         import { getAuth, onAuthStateChanged, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc, onSnapshot, updateDoc, arrayUnion, arrayRemove, runTransaction } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // --- PLACEHOLDER VARIABLES (DO NOT CHANGE) ---
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'finansync-app-default';
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : { apiKey: "AIza...", authDomain: "...", projectId: "..." };
-        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : undefined;
+        // --- CONFIGURAÇÃO DO FIREBASE (IMPORTANTE!) ---
+        // Cole aqui as configurações do seu projeto Firebase.
+        // Você encontra isso no Console do Firebase > Configurações do Projeto > Geral > Seus apps > App da Web.
+        const firebaseConfig = {
+            apiKey: "COLE_SUA_API_KEY_AQUI",
+            authDomain: "SEU_PROJETO.firebaseapp.com",
+            projectId: "SEU_PROJETO_ID",
+            storageBucket: "SEU_PROJETO.appspot.com",
+            messagingSenderId: "SEU_SENDER_ID",
+            appId: "SEU_APP_ID_DA_WEB"
+        };
+
+        const appId = 'controle-financeiro-app'; // Você pode manter este nome ou escolher outro.
 
         // --- FIREBASE INITIALIZATION ---
         let app, auth, db, userId;
@@ -248,6 +257,8 @@
                 db = getFirestore(app);
             } catch (error) {
                 console.error("Firebase initialization failed:", error);
+                const splashMessage = document.getElementById('splash-message');
+                splashMessage.innerHTML = `<strong class="text-red-500">Erro na Configuração!</strong><br>Verifique se você colou as chaves do Firebase no código.`;
             }
         }
         
@@ -680,6 +691,11 @@
 
         // --- APP INITIALIZATION ---
         async function main() {
+            if (firebaseConfig.apiKey === "COLE_SUA_API_KEY_AQUI") {
+                const splashMessage = document.getElementById('splash-message');
+                splashMessage.innerHTML = `<strong class="text-red-500">Configuração Pendente!</strong><br>Por favor, cole as configurações do seu projeto Firebase no código.`;
+                return;
+            }
             await initializeFirebase();
             addEventListeners();
             onAuthStateChanged(auth, (user) => {
@@ -691,7 +707,11 @@
                         loadAndDisplayMonthData(state.currentDate);
                     }, 2000);
                 } else {
-                    signInAnonymously(auth).catch(error => { console.error("Anonymous sign-in failed:", error); });
+                    signInAnonymously(auth).catch(error => { 
+                        console.error("Anonymous sign-in failed:", error); 
+                        const splashMessage = document.getElementById('splash-message');
+                        splashMessage.innerHTML = `<strong class="text-red-500">Erro de Autenticação!</strong><br>Verifique se o seu domínio Vercel está autorizado no Firebase.`;
+                    });
                 }
             });
         }
